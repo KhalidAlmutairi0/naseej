@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "../components/ui/sonner";
+import { getPublicSupabaseConfig } from "../lib/public-config";
 
 function NotFoundComponent() {
   return (
@@ -78,6 +79,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  // Load the browser-safe Supabase config from server runtime env, so the client works
+  // even when the host provides env only at runtime / under non-VITE names.
+  loader: async () => ({ supabaseConfig: await getPublicSupabaseConfig() }),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -131,9 +135,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const { supabaseConfig } = Route.useLoaderData();
 
   return (
     <QueryClientProvider client={queryClient}>
+      {/* Inject runtime Supabase config before any client code touches the SDK. */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `window.__SUPABASE__=${JSON.stringify(supabaseConfig)};`,
+        }}
+      />
       <Outlet />
       <Toaster position="top-center" dir="rtl" />
     </QueryClientProvider>
