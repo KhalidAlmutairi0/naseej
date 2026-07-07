@@ -1,0 +1,13 @@
+.git
+.claude
+.workspace
+.lovable
+node_modules
+.output
+.tanstack
+.nitro
+.wrangler
+dist
+dist-ssr
+.env
+*.log

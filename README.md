@@ -108,6 +108,24 @@ Lint:
 bun run lint
 ```
 
+## CranL Deployment
+
+This repository includes a `Dockerfile` for app-host deployment. The production image:
+
+- installs dependencies with `npm ci`
+- builds the TanStack/Nitro app with `npm run build`
+- runs `.output/server/index.mjs` as a Node server
+- binds to `0.0.0.0` and uses `PORT`, defaulting to `3000`
+
+Set these environment variables in CranL:
+
+```bash
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+```
+
+Do not set `OPENAI_API_KEY` or `SUPABASE_SERVICE_ROLE_KEY` on the browser app unless the same deployment also runs trusted server-only Supabase Edge Function code. Those secrets belong in Supabase Edge Function secrets.
+
 ## Supabase
 
 The initial migration is `supabase/migrations/0001_init.sql`. It must include tables, constraints, indexes, and RLS policies together.
