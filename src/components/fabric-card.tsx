@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Star } from "lucide-react";
 import type { Fabric } from "@/lib/types";
-import { FabricSwatch } from "./fabric-swatch";
+import { FabricImage } from "./fabric-image";
 
 // Bound to real fabric columns (sku, description, price, season_tags, image_url).
 // `rating` is an optional pre-computed average — the card doesn't fetch per-item ratings.
@@ -15,15 +15,7 @@ export function FabricCard({ fabric, rating }: { fabric: Fabric; rating?: number
       className="group block card-elevated overflow-hidden transition hover:-translate-y-0.5 hover:shadow-lg"
     >
       <div className="relative">
-        {fabric.image_url ? (
-          <img
-            src={fabric.image_url}
-            alt={fabric.sku}
-            className="aspect-[4/5] w-full object-cover"
-          />
-        ) : (
-          <FabricSwatch colorHex="#e8dcc4" className="aspect-[4/5] w-full" label={fabric.sku} />
-        )}
+        <FabricImage src={fabric.image_url} sku={fabric.sku} className="aspect-[4/5] w-full" />
         {fabric.season_tags[0] && (
           <div className="absolute bottom-3 right-3 rounded-full bg-card/85 backdrop-blur-sm px-2 py-1 text-[10px] font-medium ring-1 ring-border">
             {fabric.season_tags[0]}

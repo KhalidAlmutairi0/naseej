@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Package, Ruler, Users, Inbox, Plus, ArrowLeft } from "lucide-react";
 import { ShopShell } from "@/components/shop-shell";
-import { FabricSwatch } from "@/components/fabric-swatch";
+import { FabricImage } from "@/components/fabric-image";
 import { useSession } from "@/hooks/useSession";
 import { useShopFabrics } from "@/hooks/useFabrics";
 import { useShopCustomers } from "@/hooks/useCustomers";
@@ -105,18 +105,11 @@ function ShopDashboard() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {fabrics.slice(0, 4).map((f) => (
               <div key={f.id} className="card-elevated p-3">
-                {f.image_url ? (
-                  <img
-                    src={f.image_url}
-                    alt={f.sku}
-                    className="aspect-square w-full rounded-xl mb-3 object-cover"
-                  />
-                ) : (
-                  <FabricSwatch
-                    colorHex="#e8dcc4"
-                    className="aspect-square w-full rounded-xl mb-3"
-                  />
-                )}
+                <FabricImage
+                  src={f.image_url}
+                  sku={f.sku}
+                  className="aspect-square w-full rounded-xl mb-3"
+                />
                 <p className="text-[10px] text-accent font-bold uppercase tracking-wider">
                   {f.sku}
                 </p>

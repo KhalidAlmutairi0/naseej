@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Share2, Star, Loader2 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
-import { FabricSwatch } from "@/components/fabric-swatch";
 import { FabricCard } from "@/components/fabric-card";
+import { FabricImage } from "@/components/fabric-image";
 import { FabricRating } from "@/components/fabric/FabricRating";
 import { ContactShopButton } from "@/components/fabric/ContactShopButton";
 import { useFabric, useBrowseFabrics } from "@/hooks/useFabrics";
@@ -58,15 +58,7 @@ function FabricDetail() {
 
       {/* Gallery */}
       <div className="relative overflow-hidden rounded-3xl">
-        {fabric.image_url ? (
-          <img
-            src={fabric.image_url}
-            alt={fabric.sku}
-            className="aspect-square w-full object-cover"
-          />
-        ) : (
-          <FabricSwatch colorHex="#e8dcc4" className="aspect-square w-full" label={fabric.sku} />
-        )}
+        <FabricImage src={fabric.image_url} sku={fabric.sku} className="aspect-square w-full" />
         <div className="absolute top-4 left-4 flex gap-2">
           <button className="grid size-10 place-items-center rounded-full bg-card/85 backdrop-blur ring-1 ring-border shadow-sm">
             <Share2 className="size-4" />

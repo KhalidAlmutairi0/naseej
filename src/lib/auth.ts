@@ -14,6 +14,10 @@ export class ApiCallError extends Error {
 
 // Invoke an edge function and normalize its response/error envelope.
 async function callFn<T>(name: string, body: unknown): Promise<T> {
+  if (!isSupabaseConfigured()) {
+    throw new ApiCallError("not_migrated", "تسجيل الدخول غير متاح حالياً على نسخة CranL.");
+  }
+
   const { data, error } = await supabase.functions.invoke(name, { body });
   if (error) {
     let code = "function_error";
@@ -81,6 +85,10 @@ export async function verifyOtp(
 // ---- Staff email/password flow ----
 
 export async function staffLogin(email: string, password: string): Promise<void> {
+  if (!isSupabaseConfigured()) {
+    throw new ApiCallError("not_migrated", "تسجيل دخول الموظفين غير متاح حالياً على نسخة CranL.");
+  }
+
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw new ApiCallError("invalid_credentials", "البريد أو كلمة المرور غير صحيحة.");
 }
@@ -96,6 +104,10 @@ export interface ShopRegistration {
 
 // F2: create the staff auth user, then atomically create shop + owner-staff via RPC.
 export async function registerShop(reg: ShopRegistration): Promise<UUID> {
+  if (!isSupabaseConfigured()) {
+    throw new ApiCallError("not_migrated", "تسجيل المحلات غير متاح حالياً على نسخة CranL.");
+  }
+
   const { data: signUp, error: signUpErr } = await supabase.auth.signUp({
     email: reg.email,
     password: reg.password,
@@ -133,6 +145,8 @@ export async function registerShop(reg: ShopRegistration): Promise<UUID> {
 }
 
 export async function signOut(): Promise<void> {
+  if (!isSupabaseConfigured()) return;
+
   await supabase.auth.signOut();
 }
 

@@ -40,3 +40,10 @@ export const shopFromDb = createServerFn({ method: "GET" })
     const { getShopById } = await import("./db-public.server");
     return getShopById(data.id as UUID);
   });
+
+export const fabricRatingsFromDb = createServerFn({ method: "GET" })
+  .validator((data: unknown) => idSchema.parse(data))
+  .handler(async ({ data }) => {
+    const { listFabricRatings } = await import("./db-public.server");
+    return listFabricRatings(data.id as UUID);
+  });

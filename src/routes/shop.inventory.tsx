@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Plus, Search, LayoutGrid, List, Pencil, Trash2, Loader2 } from "lucide-react";
 import { ShopShell } from "@/components/shop-shell";
 import { FabricForm } from "@/components/fabric/FabricForm";
-import { FabricSwatch } from "@/components/fabric-swatch";
+import { FabricImage } from "@/components/fabric-image";
 import { useSession } from "@/hooks/useSession";
 import { useShopFabrics, useFabricMutations, type FabricInput } from "@/hooks/useFabrics";
 import type { Fabric } from "@/lib/types";
@@ -100,11 +100,7 @@ function Inventory() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {list.map((f) => (
             <div key={f.id} className="card-elevated overflow-hidden">
-              {f.image_url ? (
-                <img src={f.image_url} alt={f.sku} className="aspect-[4/3] w-full object-cover" />
-              ) : (
-                <FabricSwatch colorHex="#e8dcc4" className="aspect-[4/3] w-full" label={f.sku} />
-              )}
+              <FabricImage src={f.image_url} sku={f.sku} className="aspect-[4/3] w-full" />
               <div className="p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">

@@ -3,7 +3,7 @@ import "@tanstack/react-start/server-only";
 import { Pool, type QueryResultRow } from "pg";
 
 import type { BrowseFilters } from "@/hooks/useFabrics";
-import type { Fabric, Shop, UUID } from "./types";
+import type { Fabric, Rating, Shop, UUID } from "./types";
 
 export interface SqlQuery {
   text: string;
@@ -12,6 +12,7 @@ export interface SqlQuery {
 
 const FABRIC_COLUMNS = "id, shop_id, sku, description, price, season_tags, image_url, created_at";
 const SHOP_COLUMNS = "id, name, location, contact_phone, created_at";
+const RATING_COLUMNS = "id, customer_id, fabric_id, stars, review_text, created_at";
 
 let pool: Pool | undefined;
 
@@ -77,6 +78,17 @@ function normalizeShop(row: QueryResultRow): Shop {
   };
 }
 
+function normalizeRating(row: QueryResultRow): Rating {
+  return {
+    id: row.id,
+    customer_id: row.customer_id,
+    fabric_id: row.fabric_id,
+    stars: Number(row.stars),
+    review_text: row.review_text,
+    created_at: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at,
+  };
+}
+
 export async function listBrowseFabrics(filters: BrowseFilters = {}): Promise<Fabric[]> {
   const query = buildBrowseFabricsQuery(filters);
   const result = await getPool().query(query.text, query.values);
@@ -96,4 +108,12 @@ export async function listShops(): Promise<Shop[]> {
 export async function getShopById(id: UUID): Promise<Shop | null> {
   const result = await getPool().query(`select ${SHOP_COLUMNS} from shops where id = $1`, [id]);
   return result.rows[0] ? normalizeShop(result.rows[0]) : null;
+}
+
+export async function listFabricRatings(fabricId: UUID): Promise<Rating[]> {
+  const result = await getPool().query(
+    `select ${RATING_COLUMNS} from ratings where fabric_id = $1 order by created_at desc`,
+    [fabricId],
+  );
+  return result.rows.map(normalizeRating);
 }
