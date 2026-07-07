@@ -1,8 +1,6 @@
 # project-structure.md
 
-Stack target: React + Vite + TypeScript + Tailwind + shadcn/ui + TanStack Start Node server + CranL PostgreSQL via server-only `DATABASE_URL`.
-
-Migration status: public shop/fabric reads use server functions and `DATABASE_URL`; remaining auth/write/search flows still contain legacy Supabase code and must be migrated before those flows are production-ready.
+Stack: React + Vite + TypeScript + Tailwind + shadcn/ui + Supabase (Auth, Postgres + pgvector, Storage, Edge Functions). This is Lovable's default generated stack — do not swap it.
 
 ## Route Map
 

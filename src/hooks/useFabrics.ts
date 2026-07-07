@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { isSupabaseConfigured, supabase } from "@/lib/supabaseClient";
-import { browseFabricsFromDb, fabricFromDb } from "@/lib/public-data";
+import { supabase } from "@/lib/supabaseClient";
 import { useSession } from "./useSession";
 import type { Fabric, UUID } from "@/lib/types";
 
@@ -43,10 +42,6 @@ export function useBrowseFabrics(filters: BrowseFilters = {}) {
   return useQuery<Fabric[]>({
     queryKey: ["fabrics", "browse", filters],
     queryFn: async () => {
-      if (!isSupabaseConfigured()) {
-        return browseFabricsFromDb({ data: filters });
-      }
-
       let query = supabase.from("fabrics").select(FABRIC_COLS);
       if (filters.shopId) query = query.eq("shop_id", filters.shopId);
       if (filters.season) query = query.contains("season_tags", [filters.season]);
@@ -65,10 +60,6 @@ export function useFabric(id: UUID | undefined) {
     queryKey: ["fabrics", "one", id],
     enabled: !!id,
     queryFn: async () => {
-      if (!isSupabaseConfigured()) {
-        return fabricFromDb({ data: { id: id! } });
-      }
-
       const { data, error } = await supabase
         .from("fabrics")
         .select(FABRIC_COLS)

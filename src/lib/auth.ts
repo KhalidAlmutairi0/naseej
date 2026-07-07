@@ -1,7 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
-import { deleteCookie, getCookie, setCookie } from "@tanstack/react-start/server";
-import { z } from "zod";
-import { isSupabaseConfigured, supabase } from "./supabaseClient";
+import { supabase } from "./supabaseClient";
 import { SAUDI_PHONE_REGEX } from "./constants";
 import type { SendOtpResponse, VerifyOtpResponse, StaffRole, UUID } from "./types";
 
@@ -17,11 +14,9 @@ export class ApiCallError extends Error {
 
 // Invoke an edge function and normalize its response/error envelope.
 async function callFn<T>(name: string, body: unknown): Promise<T> {
-  if (!isSupabaseConfigured()) {
-    throw new ApiCallError("not_migrated", "تسجيل الدخول غير متاح حالياً على نسخة CranL.");
-  }
-
-  const { data, error } = await supabase.functions.invoke(name, { body });
+  const { data, error } = await supabase.functions.invoke(name, {
+    body: body as Record<string, unknown>,
+  });
   if (error) {
     let code = "function_error";
     let message = "حدث خطأ. حاول مرة أخرى.";
@@ -88,17 +83,8 @@ export async function verifyOtp(
 // ---- Staff email/password flow ----
 
 export async function staffLogin(email: string, password: string): Promise<void> {
-  if (isSupabaseConfigured()) {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw new ApiCallError("invalid_credentials", "البريد أو كلمة المرور غير صحيحة.");
-    return;
-  }
-
-  try {
-    await staffLoginOnCranl({ data: { email, password } });
-  } catch {
-    throw new ApiCallError("invalid_credentials", "البريد أو كلمة المرور غير صحيحة.");
-  }
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw new ApiCallError("invalid_credentials", "البريد أو كلمة المرور غير صحيحة.");
 }
 
 export interface ShopRegistration {
@@ -110,108 +96,46 @@ export interface ShopRegistration {
   password: string;
 }
 
-const staffLoginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
-});
-
-const shopRegistrationSchema = z.object({
-  shopName: z.string().min(1),
-  location: z.string(),
-  contactPhone: z.string(),
-  ownerName: z.string().min(1),
-  email: z.string().email(),
-  password: z.string().min(6),
-});
-
-const staffLoginOnCranl = createServerFn({ method: "POST" })
-  .validator((data: unknown) => staffLoginSchema.parse(data))
-  .handler(async ({ data }) => {
-    const { loginStaffWithPassword, issueSessionCookie } = await import("./auth-db.server");
-    const role = await loginStaffWithPassword(data.email, data.password);
-    const cookie = issueSessionCookie(role);
-    setCookie(cookie.name, cookie.value, cookie.options);
-    return role;
-  });
-
-const registerShopOnCranl = createServerFn({ method: "POST" })
-  .validator((data: unknown) => shopRegistrationSchema.parse(data))
-  .handler(async ({ data }) => {
-    const { registerShopWithPassword, issueSessionCookie } = await import("./auth-db.server");
-    const role = await registerShopWithPassword(data);
-    const cookie = issueSessionCookie(role);
-    setCookie(cookie.name, cookie.value, cookie.options);
-    return role.shopId;
-  });
-
-const signOutFromCranl = createServerFn({ method: "POST" }).handler(async () => {
-  const { clearSessionCookieOptions } = await import("./auth-db.server");
-  const cookie = clearSessionCookieOptions();
-  deleteCookie(cookie.name, cookie.options);
-  return { success: true };
-});
-
-const resolveRoleFromCranl = createServerFn({ method: "GET" }).handler(async () => {
-  const { clearSessionCookieOptions, resolveCookieSession } = await import("./auth-db.server");
-  const cookie = clearSessionCookieOptions();
-  return resolveCookieSession(getCookie(cookie.name));
-});
-
-// F2: create shop + first owner staff row in one CranL PostgreSQL transaction.
+// F2: create the staff auth user, then atomically create shop + owner-staff via RPC.
 export async function registerShop(reg: ShopRegistration): Promise<UUID> {
-  if (isSupabaseConfigured()) {
-    const { data: signUp, error: signUpErr } = await supabase.auth.signUp({
+  const { data: signUp, error: signUpErr } = await supabase.auth.signUp({
+    email: reg.email,
+    password: reg.password,
+  });
+  if (signUpErr) {
+    throw new ApiCallError("signup_failed", signUpErr.message);
+  }
+  // If email confirmation is off, signUp already returns a session; otherwise force one.
+  if (!signUp.session) {
+    const { error: signInErr } = await supabase.auth.signInWithPassword({
       email: reg.email,
       password: reg.password,
     });
-    if (signUpErr) {
-      throw new ApiCallError("signup_failed", signUpErr.message);
+    if (signInErr) {
+      throw new ApiCallError(
+        "confirm_email",
+        "تم إنشاء الحساب. فعّل بريدك الإلكتروني ثم سجّل الدخول.",
+      );
     }
-
-    if (!signUp.session) {
-      const { error: signInErr } = await supabase.auth.signInWithPassword({
-        email: reg.email,
-        password: reg.password,
-      });
-      if (signInErr) {
-        throw new ApiCallError(
-          "confirm_email",
-          "تم إنشاء الحساب. فعّل بريدك الإلكتروني ثم سجّل الدخول.",
-        );
-      }
-    }
-
-    const { data, error } = await supabase.rpc("register_shop", {
-      p_shop_name: reg.shopName,
-      p_location: reg.location,
-      p_contact_phone: reg.contactPhone,
-      p_owner_name: reg.ownerName,
-    });
-    if (error) {
-      const code = error.message.includes("already_registered")
-        ? "already_registered"
-        : "register_failed";
-      throw new ApiCallError(code, "تعذر إنشاء المحل. حاول مرة أخرى.");
-    }
-    return data as UUID;
   }
 
-  try {
-    return await registerShopOnCranl({ data: reg });
-  } catch (error) {
-    if (error instanceof Error && error.message === "email_already_registered") {
-      throw new ApiCallError("already_registered", "البريد الإلكتروني مسجل مسبقاً.");
-    }
-    throw new ApiCallError("register_failed", "تعذر إنشاء المحل. حاول مرة أخرى.");
+  const { data, error } = await supabase.rpc("register_shop", {
+    p_shop_name: reg.shopName,
+    p_location: reg.location,
+    p_contact_phone: reg.contactPhone,
+    p_owner_name: reg.ownerName,
+  });
+  if (error) {
+    const code = error.message.includes("already_registered")
+      ? "already_registered"
+      : "register_failed";
+    throw new ApiCallError(code, "تعذر إنشاء المحل. حاول مرة أخرى.");
   }
+  return data as UUID;
 }
 
 export async function signOut(): Promise<void> {
-  await signOutFromCranl();
-
-  if (isSupabaseConfigured()) {
-    await supabase.auth.signOut();
-  }
+  await supabase.auth.signOut();
 }
 
 // ---- Role detection ----
@@ -225,27 +149,23 @@ export interface ResolvedRole {
 }
 
 export async function resolveRole(): Promise<ResolvedRole> {
-  if (isSupabaseConfigured()) {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const userId = sessionData.session?.user.id ?? null;
-    if (!userId) return { userId: null, role: null, shopId: null, staffRole: null };
+  const { data: sessionData } = await supabase.auth.getSession();
+  const userId = sessionData.session?.user.id ?? null;
+  if (!userId) return { userId: null, role: null, shopId: null, staffRole: null };
 
-    const { data: staffRow } = await supabase
-      .from("staff")
-      .select("shop_id, role")
-      .eq("id", userId)
-      .maybeSingle();
+  const { data: staffRow } = await supabase
+    .from("staff")
+    .select("shop_id, role")
+    .eq("id", userId)
+    .maybeSingle();
 
-    if (staffRow) {
-      return {
-        userId,
-        role: "staff",
-        shopId: staffRow.shop_id,
-        staffRole: staffRow.role as StaffRole,
-      };
-    }
-    return { userId, role: "customer", shopId: null, staffRole: null };
+  if (staffRow) {
+    return {
+      userId,
+      role: "staff",
+      shopId: staffRow.shop_id,
+      staffRole: staffRow.role as StaffRole,
+    };
   }
-
-  return resolveRoleFromCranl();
+  return { userId, role: "customer", shopId: null, staffRole: null };
 }

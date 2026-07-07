@@ -1,9 +1,5 @@
 # database.md
 
-Current target: CranL PostgreSQL reached from the TanStack Start Node server through `DATABASE_URL`. The CranL migration is `migrations/0001_cranl_init.sql`.
-
-The Supabase SQL below is legacy reference during migration and must not be used for a new CranL deployment.
-
 Postgres on Supabase. `pgvector` enabled. Everything below ships in **one migration** (`0001_init.sql`) — tables, constraints, indexes, and RLS together. RLS is never a follow-up task.
 
 > **Embedding dimension**: `vector(1536)` below assumes OpenAI `text-embedding-3-small`. If a different model is chosen (see architecture.md, Arabic verification), change the dimension BEFORE running the migration. Never migrate first and guess later.
