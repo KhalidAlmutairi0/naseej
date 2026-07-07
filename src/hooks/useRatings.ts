@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fabricRatingsFromDb } from "@/lib/public-data";
-import { supabase } from "@/lib/supabaseClient";
+import { isSupabaseConfigured, supabase } from "@/lib/supabaseClient";
 import { useSession } from "./useSession";
 import type { Rating, UUID } from "@/lib/types";
 
@@ -15,7 +15,18 @@ export function useFabricRatings(fabricId: UUID | undefined) {
     queryKey: ["ratings", "fabric", fabricId],
     enabled: !!fabricId,
     queryFn: async () => {
-      const ratings = await fabricRatingsFromDb({ data: { id: fabricId! } });
+      let ratings: Rating[];
+      if (isSupabaseConfigured()) {
+        const { data, error } = await supabase
+          .from("ratings")
+          .select("id, customer_id, fabric_id, stars, review_text, created_at")
+          .eq("fabric_id", fabricId!)
+          .order("created_at", { ascending: false });
+        if (error) throw error;
+        ratings = (data ?? []) as Rating[];
+      } else {
+        ratings = await fabricRatingsFromDb({ data: { id: fabricId! } });
+      }
       const count = ratings.length;
       const average = count === 0 ? 0 : ratings.reduce((s, r) => s + r.stars, 0) / count;
       return { ratings, aggregate: { average, count } };

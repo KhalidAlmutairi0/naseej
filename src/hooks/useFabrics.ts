@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabaseClient";
+import { isSupabaseConfigured, supabase } from "@/lib/supabaseClient";
 import { browseFabricsFromDb, fabricFromDb } from "@/lib/public-data";
 import { useSession } from "./useSession";
 import type { Fabric, UUID } from "@/lib/types";
@@ -42,7 +42,21 @@ export async function triggerEmbed(fabricId: UUID): Promise<void> {
 export function useBrowseFabrics(filters: BrowseFilters = {}) {
   return useQuery<Fabric[]>({
     queryKey: ["fabrics", "browse", filters],
-    queryFn: () => browseFabricsFromDb({ data: filters }),
+    queryFn: async () => {
+      if (!isSupabaseConfigured()) {
+        return browseFabricsFromDb({ data: filters });
+      }
+
+      let query = supabase.from("fabrics").select(FABRIC_COLS);
+      if (filters.shopId) query = query.eq("shop_id", filters.shopId);
+      if (filters.season) query = query.contains("season_tags", [filters.season]);
+      if (filters.minPrice != null) query = query.gte("price", filters.minPrice);
+      if (filters.maxPrice != null) query = query.lte("price", filters.maxPrice);
+
+      const { data, error } = await query.order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as Fabric[];
+    },
   });
 }
 
@@ -50,7 +64,19 @@ export function useFabric(id: UUID | undefined) {
   return useQuery<Fabric | null>({
     queryKey: ["fabrics", "one", id],
     enabled: !!id,
-    queryFn: () => fabricFromDb({ data: { id: id! } }),
+    queryFn: async () => {
+      if (!isSupabaseConfigured()) {
+        return fabricFromDb({ data: { id: id! } });
+      }
+
+      const { data, error } = await supabase
+        .from("fabrics")
+        .select(FABRIC_COLS)
+        .eq("id", id!)
+        .maybeSingle();
+      if (error) throw error;
+      return (data as Fabric | null) ?? null;
+    },
   });
 }
 

@@ -88,6 +88,12 @@ export async function verifyOtp(
 // ---- Staff email/password flow ----
 
 export async function staffLogin(email: string, password: string): Promise<void> {
+  if (isSupabaseConfigured()) {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw new ApiCallError("invalid_credentials", "البريد أو كلمة المرور غير صحيحة.");
+    return;
+  }
+
   try {
     await staffLoginOnCranl({ data: { email, password } });
   } catch {
@@ -153,6 +159,43 @@ const resolveRoleFromCranl = createServerFn({ method: "GET" }).handler(async () 
 
 // F2: create shop + first owner staff row in one CranL PostgreSQL transaction.
 export async function registerShop(reg: ShopRegistration): Promise<UUID> {
+  if (isSupabaseConfigured()) {
+    const { data: signUp, error: signUpErr } = await supabase.auth.signUp({
+      email: reg.email,
+      password: reg.password,
+    });
+    if (signUpErr) {
+      throw new ApiCallError("signup_failed", signUpErr.message);
+    }
+
+    if (!signUp.session) {
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email: reg.email,
+        password: reg.password,
+      });
+      if (signInErr) {
+        throw new ApiCallError(
+          "confirm_email",
+          "تم إنشاء الحساب. فعّل بريدك الإلكتروني ثم سجّل الدخول.",
+        );
+      }
+    }
+
+    const { data, error } = await supabase.rpc("register_shop", {
+      p_shop_name: reg.shopName,
+      p_location: reg.location,
+      p_contact_phone: reg.contactPhone,
+      p_owner_name: reg.ownerName,
+    });
+    if (error) {
+      const code = error.message.includes("already_registered")
+        ? "already_registered"
+        : "register_failed";
+      throw new ApiCallError(code, "تعذر إنشاء المحل. حاول مرة أخرى.");
+    }
+    return data as UUID;
+  }
+
   try {
     return await registerShopOnCranl({ data: reg });
   } catch (error) {
@@ -182,30 +225,27 @@ export interface ResolvedRole {
 }
 
 export async function resolveRole(): Promise<ResolvedRole> {
-  const cranlRole = await resolveRoleFromCranl();
-  if (cranlRole.userId) return cranlRole;
+  if (isSupabaseConfigured()) {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const userId = sessionData.session?.user.id ?? null;
+    if (!userId) return { userId: null, role: null, shopId: null, staffRole: null };
 
-  if (!isSupabaseConfigured()) {
-    return { userId: null, role: null, shopId: null, staffRole: null };
+    const { data: staffRow } = await supabase
+      .from("staff")
+      .select("shop_id, role")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (staffRow) {
+      return {
+        userId,
+        role: "staff",
+        shopId: staffRow.shop_id,
+        staffRole: staffRow.role as StaffRole,
+      };
+    }
+    return { userId, role: "customer", shopId: null, staffRole: null };
   }
 
-  const { data: sessionData } = await supabase.auth.getSession();
-  const userId = sessionData.session?.user.id ?? null;
-  if (!userId) return { userId: null, role: null, shopId: null, staffRole: null };
-
-  const { data: staffRow } = await supabase
-    .from("staff")
-    .select("shop_id, role")
-    .eq("id", userId)
-    .maybeSingle();
-
-  if (staffRow) {
-    return {
-      userId,
-      role: "staff",
-      shopId: staffRow.shop_id,
-      staffRole: staffRow.role as StaffRole,
-    };
-  }
-  return { userId, role: "customer", shopId: null, staffRole: null };
+  return resolveRoleFromCranl();
 }

@@ -39,4 +39,8 @@ describe("CranL auth primitives", () => {
 
     expect(verifySessionToken(tampered, "test-secret")).toBeNull();
   });
+
+  it("does not require a session secret when no cookie token exists", () => {
+    expect(verifySessionToken(undefined)).toBeNull();
+  });
 });

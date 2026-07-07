@@ -78,14 +78,15 @@ export function createSessionToken(
 
 export function verifySessionToken(
   token: string | undefined,
-  secret = getSessionSecret(),
+  secret?: string,
   now = Math.floor(Date.now() / 1000),
 ): ResolvedRole | null {
   if (!token) return null;
+  const signingSecret = secret ?? getSessionSecret();
   const [payload, signature] = token.split(".");
   if (!payload || !signature) return null;
 
-  const expected = sign(payload, secret);
+  const expected = sign(payload, signingSecret);
   const actualBuffer = Buffer.from(signature);
   const expectedBuffer = Buffer.from(expected);
   if (
