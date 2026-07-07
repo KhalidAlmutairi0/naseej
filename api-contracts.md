@@ -1,5 +1,9 @@
 # api-contracts.md
 
+Current target: TanStack Start server functions/API routes using CranL PostgreSQL through server-only `DATABASE_URL`. Public shop/fabric reads have been migrated to this path.
+
+The Supabase Edge Function contracts below are legacy reference during migration and must not be used as the CranL deployment contract.
+
 Almost all data access is the Supabase client SDK hitting tables directly, gated by the RLS in `database.md` — those operations need no custom contract. This file defines the **only four Edge Functions** in the system. A fifth function appearing anywhere is scope drift.
 
 ## Conventions (all four functions)

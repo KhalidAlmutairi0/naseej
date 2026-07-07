@@ -17,7 +17,7 @@ Implementation must follow these documents before code assumptions:
 
 - `plan.md` - product intent, MVP scope, acceptance criteria, and non-goals
 - `database.md` - schema, RLS policies, constraints, indexes, and isolation rules
-- `api-contracts.md` - the only four Supabase Edge Functions
+- `api-contracts.md` - server-side API contract
 - `architecture.md` - system design and decision log
 - `project-structure.md` - intended file layout and routing map
 - `AGENTS.md` - operating rules for coding agents
@@ -32,7 +32,8 @@ Implementation must follow these documents before code assumptions:
 - Vite
 - Tailwind CSS
 - shadcn/ui primitives
-- Supabase Auth, Postgres, RLS, pgvector, Storage, and Edge Functions
+- CranL PostgreSQL via `DATABASE_URL`
+- pgvector for semantic fabric search
 
 ## Repository Layout
 
@@ -40,16 +41,15 @@ Implementation must follow these documents before code assumptions:
 .
 ├── src/
 │   ├── components/        # UI primitives and feature components
-│   ├── hooks/             # Supabase data access hooks
+│   ├── hooks/             # React Query hooks
 │   ├── lib/               # shared constants, auth helpers, types, clients
 │   ├── routes/            # TanStack file-based routes
 │   ├── router.tsx
 │   ├── server.ts
 │   ├── start.ts
 │   └── styles.css
-├── supabase/
-│   ├── functions/         # send-otp, verify-otp, embed-fabric, semantic-search
-│   └── migrations/        # 0001_init.sql includes schema + RLS
+├── migrations/            # CranL PostgreSQL migrations
+├── supabase/              # legacy migration/function files retained during DATABASE_URL migration
 ├── plan.md
 ├── database.md
 ├── api-contracts.md
@@ -66,21 +66,20 @@ Copy `.env.example` and fill the required values:
 cp .env.example .env
 ```
 
-Browser-safe values:
+Server-only values:
 
 ```bash
-VITE_SUPABASE_URL=
-VITE_SUPABASE_ANON_KEY=
+DATABASE_URL=
+DATABASE_SSL=false
 ```
 
-Server-only Supabase Edge Function secrets:
+Optional server-only embeddings value:
 
 ```bash
-SUPABASE_SERVICE_ROLE_KEY=
 OPENAI_API_KEY=
 ```
 
-The embeddings key must stay inside `embed-fabric` and `semantic-search`. Do not expose it through Vite or client-side code.
+Never expose `DATABASE_URL` or `OPENAI_API_KEY` through `VITE_*`.
 
 ## Development
 
@@ -120,21 +119,16 @@ This repository includes a `Dockerfile` for app-host deployment. The production 
 Set these environment variables in CranL:
 
 ```bash
-VITE_SUPABASE_URL=
-VITE_SUPABASE_ANON_KEY=
+DATABASE_URL=
+DATABASE_SSL=false
 ```
 
-Do not set `OPENAI_API_KEY` or `SUPABASE_SERVICE_ROLE_KEY` on the browser app unless the same deployment also runs trusted server-only Supabase Edge Function code. Those secrets belong in Supabase Edge Function secrets.
+Run `migrations/0001_cranl_init.sql` against the CranL PostgreSQL database before using data-backed flows.
 
-## Supabase
+## Database
 
-The initial migration is `supabase/migrations/0001_init.sql`. It must include tables, constraints, indexes, and RLS policies together.
+The CranL PostgreSQL migration is `migrations/0001_cranl_init.sql`.
 
-Exactly four Edge Function directories are expected:
-
-- `send-otp`
-- `verify-otp`
-- `embed-fabric`
-- `semantic-search`
+Migration status: public shop/fabric reads use `DATABASE_URL` through TanStack Start server functions. Auth, staff writes, ratings, contact requests, measurements, and semantic search still need to be migrated from the legacy Supabase paths.
 
 Do not add purchase, reservation, cart, checkout, admin, or approval workflows.
