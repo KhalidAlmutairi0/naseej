@@ -33,3 +33,24 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local tooling & secrets
+.tooling/
+.env
+
+# Screenshots / scratch images
+image*.png
+
+# Build output & framework caches
+.output/
+.tanstack/
+.wrangler/
+
+# Local agent/tooling metadata
+.claude/
+.lovable/
+.workspace/
+
+# Supabase CLI local state
+supabase/.temp/
+supabase/.branches/
