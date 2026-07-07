@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { isSupabaseConfigured, supabase } from "@/lib/supabaseClient";
 import { resolveRole, type ResolvedRole } from "@/lib/auth";
 
 const SESSION_KEY = ["session"] as const;
@@ -17,6 +17,8 @@ export function useSession() {
   });
 
   useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+
     const { data: sub } = supabase.auth.onAuthStateChange(() => {
       queryClient.invalidateQueries({ queryKey: SESSION_KEY });
     });

@@ -8,8 +8,12 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undef
 
 let client: SupabaseClient | undefined;
 
+export function isSupabaseConfigured(): boolean {
+  return Boolean(supabaseUrl && supabaseAnonKey && supabaseAnonKey !== "local-dev-placeholder");
+}
+
 function getSupabaseClient(): SupabaseClient {
-  if (!supabaseUrl || !supabaseAnonKey) {
+  if (!isSupabaseConfigured()) {
     throw new Error(
       "This path still uses Supabase. The CranL DATABASE_URL migration has only converted public reads so far.",
     );

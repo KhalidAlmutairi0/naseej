@@ -1,4 +1,4 @@
-import { supabase } from "./supabaseClient";
+import { isSupabaseConfigured, supabase } from "./supabaseClient";
 import { SAUDI_PHONE_REGEX } from "./constants";
 import type { SendOtpResponse, VerifyOtpResponse, StaffRole, UUID } from "./types";
 
@@ -147,6 +147,10 @@ export interface ResolvedRole {
 }
 
 export async function resolveRole(): Promise<ResolvedRole> {
+  if (!isSupabaseConfigured()) {
+    return { userId: null, role: null, shopId: null, staffRole: null };
+  }
+
   const { data: sessionData } = await supabase.auth.getSession();
   const userId = sessionData.session?.user.id ?? null;
   if (!userId) return { userId: null, role: null, shopId: null, staffRole: null };
