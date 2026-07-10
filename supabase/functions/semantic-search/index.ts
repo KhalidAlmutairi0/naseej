@@ -19,6 +19,41 @@ const SIMILARITY_THRESHOLD = 0.4;
 // leaves a long irrelevant tail. Dropping results far below the best one removes that noise.
 const RELATIVE_MARGIN = 0.1;
 
+// Hybrid re-rank. Pure vector similarity confuses antonyms: a "ثقيل" (heavy) query scores
+// high on "خفيف" (light) descriptions because both are weight words in the same context.
+// After the vector step we add a lexical signal: +1 for each query attribute word that
+// literally appears in the description, -1 when its ANTONYM appears. This lets exact
+// attributes (heavy vs light, winter vs summer) decide the ranking.
+const LEXICAL_WEIGHT = 0.2;
+const CANDIDATE_THRESHOLD = 0.25; // wider pool to re-rank
+const CANDIDATE_COUNT = 40;
+const STOPWORDS = new Set([
+  "قماش", "ثوب", "ثياب", "ابي", "حق", "بس", "شي", "يكون", "هذا", "الي", "اللي",
+  "مع", "من", "في", "على", "عن", "او", "حلو", "ابغى", "خامة",
+]);
+const ANTONYMS: Record<string, string[]> = {
+  "ثقيل": ["خفيف"], "خفيف": ["ثقيل"],
+  "دافئ": ["بارد"], "بارد": ["دافئ"],
+  "شتوي": ["صيفي"], "صيفي": ["شتوي"],
+  "غامق": ["فاتح"], "فاتح": ["غامق"],
+  "فاخر": ["اقتصادي", "رخيص"], "رخيص": ["فاخر"], "اقتصادي": ["فاخر"],
+};
+
+function normalizeAr(s: string): string {
+  return s
+    .replace(/[ً-ْ]/g, "") // tashkeel
+    .replace(/ـ/g, "") // tatweel
+    .replace(/[أإآ]/g, "ا") // أ إ آ -> ا
+    .replace(/ى/g, "ي") // ى -> ي
+    .replace(/ة/g, "ه") // ة -> ه
+    .toLowerCase();
+}
+function contentTerms(q: string): string[] {
+  return normalizeAr(q)
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter((t) => t.length >= 3 && !STOPWORDS.has(t));
+}
+
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -78,27 +113,52 @@ Deno.serve(async (req) => {
   }
 
   const admin = createClient(url, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  // Fetch a wider candidate pool (lower threshold) so the hybrid re-rank has material.
   const { data, error } = await admin.rpc("match_fabrics", {
     query_embedding: vector,
-    match_threshold: SIMILARITY_THRESHOLD,
-    match_count: cappedLimit,
+    match_threshold: CANDIDATE_THRESHOLD,
+    match_count: CANDIDATE_COUNT,
   });
   if (error) {
     console.error("semantic-search rpc error", error);
     return fail(500, "search_failed", "تعذّر تنفيذ البحث.");
   }
 
-  const ranked = (data ?? []).map((r: { id: string; shop_id: string; similarity: number }) => ({
-    fabric_id: r.id,
-    shop_id: r.shop_id,
-    similarity: r.similarity,
-  }));
+  const candidates = (data ?? []) as { id: string; shop_id: string; similarity: number }[];
 
-  // Relative cutoff: drop anything far below the best match, so only the genuinely
-  // relevant fabrics are returned instead of a long weakly-similar tail.
-  const top = ranked.length > 0 ? ranked[0].similarity : 0;
-  const results = ranked.filter(
-    (r: { similarity: number }) => r.similarity >= top - RELATIVE_MARGIN,
-  );
+  // Descriptions for the candidate pool, to compute the lexical / antonym signal.
+  const descById = new Map<string, string>();
+  if (candidates.length > 0) {
+    const { data: rows } = await admin
+      .from("fabrics")
+      .select("id, description")
+      .in("id", candidates.map((c) => c.id));
+    for (const r of (rows ?? []) as { id: string; description: string | null }[]) {
+      descById.set(r.id, normalizeAr(r.description ?? ""));
+    }
+  }
+
+  const terms = contentTerms(query);
+  const scored = candidates
+    .map((c) => {
+      const desc = descById.get(c.id) ?? "";
+      let boost = 0;
+      for (const t of terms) {
+        if (desc.includes(t)) boost += 1;
+        if ((ANTONYMS[t] ?? []).some((a) => desc.includes(a))) boost -= 1;
+      }
+      const lexical = terms.length > 0 ? boost / terms.length : 0;
+      return { ...c, final: c.similarity + LEXICAL_WEIGHT * lexical };
+    })
+    .sort((a, b) => b.final - a.final);
+
+  // Floor + relative cutoff applied on the hybrid score: a fabric whose antonym matches
+  // is pushed below the floor and dropped, while an exact attribute match is lifted.
+  const kept = scored.filter((c) => c.final >= SIMILARITY_THRESHOLD);
+  const top = kept.length > 0 ? kept[0].final : 0;
+  const results = kept
+    .filter((c) => c.final >= top - RELATIVE_MARGIN)
+    .slice(0, cappedLimit)
+    .map((c) => ({ fabric_id: c.id, shop_id: c.shop_id, similarity: c.similarity }));
   return json({ results });
 });
