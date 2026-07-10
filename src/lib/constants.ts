@@ -29,7 +29,7 @@ export const MEASUREMENT_FIELD_LABELS: Record<MeasurementField, string> = {
 
 // Minimum cosine similarity for semantic-search results. Start at 0.3, tune with real data.
 // Below-threshold results are dropped; an empty result set is a valid answer.
-export const SIMILARITY_THRESHOLD = 0.3;
+export const SIMILARITY_THRESHOLD = 0.4;
 
 // Max results a semantic-search request may return (api-contracts.md caps at 50).
 export const SEMANTIC_SEARCH_MAX_LIMIT = 50;

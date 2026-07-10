@@ -11,7 +11,12 @@ const CORS = {
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_LIMIT = 50;
 // Keep in sync with SIMILARITY_THRESHOLD in src/lib/constants.ts (edge can't import it).
-const SIMILARITY_THRESHOLD = 0.3;
+// Absolute floor: anything below this is never relevant.
+const SIMILARITY_THRESHOLD = 0.4;
+// Relative cutoff: keep only results within this margin of the top score. Arabic embedding
+// scores are compressed and the top score varies per query, so a single absolute cutoff
+// leaves a long irrelevant tail. Dropping results far below the best one removes that noise.
+const RELATIVE_MARGIN = 0.1;
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -82,10 +87,17 @@ Deno.serve(async (req) => {
     return fail(500, "search_failed", "تعذّر تنفيذ البحث.");
   }
 
-  const results = (data ?? []).map((r: { id: string; shop_id: string; similarity: number }) => ({
+  const ranked = (data ?? []).map((r: { id: string; shop_id: string; similarity: number }) => ({
     fabric_id: r.id,
     shop_id: r.shop_id,
     similarity: r.similarity,
   }));
+
+  // Relative cutoff: drop anything far below the best match, so only the genuinely
+  // relevant fabrics are returned instead of a long weakly-similar tail.
+  const top = ranked.length > 0 ? ranked[0].similarity : 0;
+  const results = ranked.filter(
+    (r: { similarity: number }) => r.similarity >= top - RELATIVE_MARGIN,
+  );
   return json({ results });
 });
