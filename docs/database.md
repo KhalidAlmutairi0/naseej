@@ -2,7 +2,7 @@
 
 Postgres on Supabase. `pgvector` enabled. Everything below ships in **one migration** (`0001_init.sql`) - tables, constraints, indexes, and RLS together. RLS is never a follow-up task.
 
-> **Embedding dimension**: `vector(1536)` below assumes OpenAI `text-embedding-3-small`. If a different model is chosen (see architecture.md, Arabic verification), change the dimension BEFORE running the migration. Never migrate first and guess later.
+> **Embedding dimension**: `vector(1536)` uses OpenAI `text-embedding-3-large` truncated to 1536 dims (the `dimensions` param) — better Arabic relevance than 3-small while staying within the hnsw index limit. If the dimension changes, change it here BEFORE running the migration.
 
 ## Extensions
 

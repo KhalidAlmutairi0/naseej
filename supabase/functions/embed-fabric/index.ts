@@ -8,7 +8,8 @@ const CORS = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
-const EMBEDDING_MODEL = "text-embedding-3-small";
+const EMBEDDING_MODEL = "text-embedding-3-large";
+const EMBEDDING_DIMENSIONS = 1536; // 3-large truncated to 1536 keeps the vector(1536) schema + hnsw index
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -27,7 +28,7 @@ async function embed(text: string): Promise<number[]> {
       Authorization: `Bearer ${Deno.env.get("OPENAI_API_KEY")}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ model: EMBEDDING_MODEL, input: text }),
+    body: JSON.stringify({ model: EMBEDDING_MODEL, input: text, dimensions: EMBEDDING_DIMENSIONS }),
   });
   if (!res.ok) {
     throw new Error(`embeddings ${res.status}: ${await res.text()}`);
