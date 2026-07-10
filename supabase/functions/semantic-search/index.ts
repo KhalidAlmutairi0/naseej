@@ -37,7 +37,34 @@ const ANTONYMS: Record<string, string[]> = {
   "شتوي": ["صيفي"], "صيفي": ["شتوي"],
   "غامق": ["فاتح"], "فاتح": ["غامق"],
   "فاخر": ["اقتصادي", "رخيص"], "رخيص": ["فاخر"], "اقتصادي": ["فاخر"],
+  "اسود": ["ابيض"], "ابيض": ["اسود"],
 };
+
+// Synonyms: map Arabizi / English words to the Arabic tokens used in descriptions, so
+// "بلاك"/"black" match "أسود", "كوتن"/"cotton" match "قطن", etc. Values are normalized
+// (matches normalizeAr output). "شتوي" also maps to "شتاء" since descriptions say "الشتاء".
+const SYNONYMS: Record<string, string[]> = {
+  "بلاك": ["اسود"], "black": ["اسود"],
+  "وايت": ["ابيض"], "white": ["ابيض"],
+  "قراي": ["رمادي"], "جراي": ["رمادي"], "gray": ["رمادي"], "grey": ["رمادي"],
+  "براون": ["بني"], "brown": ["بني"],
+  "قولد": ["ذهبي"], "gold": ["ذهبي"], "golden": ["ذهبي"],
+  "بلو": ["ازرق", "زرق"], "blue": ["ازرق", "زرق"], "navy": ["ازرق"],
+  "كوتن": ["قطن"], "cotton": ["قطن"],
+  "wool": ["صوف"],
+  "سلك": ["حرير"], "silk": ["حرير"],
+  "linen": ["كتان"],
+  "summer": ["صيفي"], "winter": ["شتاء", "شتوي"], "شتوي": ["شتاء"],
+  "light": ["خفيف"], "heavy": ["ثقيل"],
+  "formal": ["رسمي"], "luxury": ["فاخر", "فخم"], "luxurious": ["فاخر", "فخم"],
+};
+
+function expand(term: string): string[] {
+  return [term, ...(SYNONYMS[term] ?? [])];
+}
+function antonymsOf(term: string): string[] {
+  return expand(term).flatMap((p) => ANTONYMS[p] ?? []);
+}
 
 function normalizeAr(s: string): string {
   return s
@@ -144,8 +171,8 @@ Deno.serve(async (req) => {
       const desc = descById.get(c.id) ?? "";
       let boost = 0;
       for (const t of terms) {
-        if (desc.includes(t)) boost += 1;
-        if ((ANTONYMS[t] ?? []).some((a) => desc.includes(a))) boost -= 1;
+        if (expand(t).some((p) => desc.includes(p))) boost += 1;
+        if (antonymsOf(t).some((a) => desc.includes(a))) boost -= 1;
       }
       const lexical = terms.length > 0 ? boost / terms.length : 0;
       return { ...c, final: c.similarity + LEXICAL_WEIGHT * lexical };
