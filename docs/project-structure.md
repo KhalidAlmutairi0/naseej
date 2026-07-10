@@ -1,15 +1,15 @@
 # project-structure.md
 
-Stack: React + Vite + TypeScript + Tailwind + shadcn/ui + Supabase (Auth, Postgres + pgvector, Storage, Edge Functions). This is Lovable's default generated stack — do not swap it.
+Stack: React + Vite + TypeScript + Tailwind + shadcn/ui + Supabase (Auth, Postgres + pgvector, Storage, Edge Functions). This is Lovable's default generated stack - do not swap it.
 
 ## Route Map
 
 | Route              | Page                               | Role          | Flow         |
 | ------------------ | ---------------------------------- | ------------- | ------------ |
-| `/`                | Landing → redirect by role         | public        | —            |
-| `/login`           | CustomerLogin (OTP)                | public        | —            |
-| `/shop/register`   | ShopRegister                       | public        | —            |
-| `/shop/login`      | StaffLogin (email/password)        | public        | —            |
+| `/`                | Landing → redirect by role         | public        | -            |
+| `/login`           | CustomerLogin (OTP)                | public        | -            |
+| `/shop/register`   | ShopRegister                       | public        | -            |
+| `/shop/login`      | StaffLogin (email/password)        | public        | -            |
 | `/explore`         | Explore (browse + semantic search) | customer      | Exploration  |
 | `/fabrics/:id`     | FabricDetailPage                   | customer      | Exploration  |
 | `/me/measurements` | MeasurementHistory                 | customer      | Exploration  |
@@ -45,7 +45,7 @@ src/
 │   └── useRatings.ts              # upsert + aggregate read
 │
 ├── components/
-│   ├── ui/                        # shadcn/ui primitives — do not hand-roll equivalents
+│   ├── ui/                        # shadcn/ui primitives - do not hand-roll equivalents
 │   ├── layout/
 │   │   ├── CustomerLayout.tsx
 │   │   ├── ShopLayout.tsx
@@ -80,7 +80,7 @@ supabase/
 
 ## Rules
 
-- `lib/types.ts` mirrors `database.md` exactly — if the two drift, the migration wins and types get fixed.
+- `lib/types.ts` mirrors `database.md` exactly - if the two drift, the migration wins and types get fixed.
 - `lib/constants.ts` is the single home for: the measurement field list, the semantic similarity threshold, and the 24h contact-request dedup window. No magic numbers scattered in components.
 - Exactly four edge function directories. A fifth directory appearing under `supabase/functions/` means scope drift.
-- No `pages/admin/` — there is no admin role in v1.
+- No `pages/admin/` - there is no admin role in v1.

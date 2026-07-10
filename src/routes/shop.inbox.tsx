@@ -8,7 +8,7 @@ export const Route = createFileRoute("/shop/inbox")({
   component: Inbox,
   head: () => ({
     meta: [
-      { title: "الرسائل — لوحة الخياط" },
+      { title: "الرسائل - لوحة الخياط" },
       { name: "description", content: "استفسارات العملاء وطلباتهم." },
     ],
   }),
@@ -31,7 +31,7 @@ function Inbox() {
       <div className="mb-5">
         <h1 className="text-2xl font-bold tracking-tight">طلبات التواصل</h1>
         <p className="mt-1 text-xs text-muted-foreground">
-          العملاء المهتمون بأقمشتك — {items.length} طلب
+          العملاء المهتمون بأقمشتك - {items.length} طلب
         </p>
       </div>
 
@@ -70,7 +70,7 @@ function Inbox() {
                       <span className="font-medium">{r.fabric.sku}</span>
                       {r.fabric.description && (
                         <span className="text-muted-foreground line-clamp-1 max-w-[160px]">
-                          — {r.fabric.description}
+                          - {r.fabric.description}
                         </span>
                       )}
                     </div>

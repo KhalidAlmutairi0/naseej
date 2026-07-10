@@ -1,4 +1,4 @@
-// send-otp — issue a dev-mode login code. Pre-auth.
+// send-otp - issue a dev-mode login code. Pre-auth.
 // Contract: api-contracts.md §1. Delivery is dev-mode (code returned + logged, no SMS).
 // The swap point for a real SMS provider is this file only.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";

@@ -1,6 +1,6 @@
 # database.md
 
-Postgres on Supabase. `pgvector` enabled. Everything below ships in **one migration** (`0001_init.sql`) — tables, constraints, indexes, and RLS together. RLS is never a follow-up task.
+Postgres on Supabase. `pgvector` enabled. Everything below ships in **one migration** (`0001_init.sql`) - tables, constraints, indexes, and RLS together. RLS is never a follow-up task.
 
 > **Embedding dimension**: `vector(1536)` below assumes OpenAI `text-embedding-3-small`. If a different model is chosen (see architecture.md, Arabic verification), change the dimension BEFORE running the migration. Never migrate first and guess later.
 
@@ -107,7 +107,7 @@ create policy fabrics_own_shop_delete on public.fabrics
   for delete using (shop_id = auth_shop_id());
 ```
 
-### measurements — the load-bearing table
+### measurements - the load-bearing table
 
 ```sql
 create table public.measurements (
@@ -220,6 +220,6 @@ limit $3;
 1. No table, column, or constraint exists beyond this file. A "helpful" extra column is scope drift.
 2. The measurement columns are exactly the 8 listed + notes. No renames.
 3. Never create a per-shop customers table or copy customer rows per shop.
-4. RLS ships in migration 0001. There is no "add RLS later" state, ever — not even locally.
+4. RLS ships in migration 0001. There is no "add RLS later" state, ever - not even locally.
 5. Customer inserts to `customers` go through `verify-otp` (service role). Do not add a client-side insert policy on `customers`.
 6. If the embeddings model changes, the `vector()` dimension changes in THIS file first, then the migration.

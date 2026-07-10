@@ -11,7 +11,7 @@ import { useShop } from "@/hooks/useShops";
 export const Route = createFileRoute("/shop/")({
   component: ShopDashboard,
   head: () => ({
-    meta: [{ title: "لوحة التحكم — نَسيج" }, { name: "description", content: "ملخص نشاط محلك." }],
+    meta: [{ title: "لوحة التحكم - نَسيج" }, { name: "description", content: "ملخص نشاط محلك." }],
   }),
 });
 
@@ -115,7 +115,7 @@ function ShopDashboard() {
                 </p>
                 <p className="text-xs font-semibold line-clamp-1">{f.description || "بدون وصف"}</p>
                 <p className="text-[10px] text-muted-foreground mt-1">
-                  {f.price != null ? `${f.price} ر.س` : "—"}
+                  {f.price != null ? `${f.price} ر.س` : "-"}
                 </p>
               </div>
             ))}

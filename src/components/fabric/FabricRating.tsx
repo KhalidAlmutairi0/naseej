@@ -5,7 +5,7 @@ import { useSession } from "@/hooks/useSession";
 import { useMyRating, useUpsertRating } from "@/hooks/useRatings";
 import type { UUID } from "@/lib/types";
 
-// F8: 1–5 stars + optional text. One rating per customer per fabric, editable (upsert).
+// F8: 1-5 stars + optional text. One rating per customer per fabric, editable (upsert).
 export function FabricRating({ fabricId }: { fabricId: UUID }) {
   const { role } = useSession();
   const { data: mine } = useMyRating(fabricId);

@@ -9,7 +9,7 @@ export const Route = createFileRoute("/shop/staff")({
   component: StaffManagement,
   head: () => ({
     meta: [
-      { title: "الموظفون — لوحة الخياط" },
+      { title: "الموظفون - لوحة الخياط" },
       { name: "description", content: "أدر موظفي محلك." },
     ],
   }),
@@ -36,12 +36,12 @@ function StaffManagement() {
         <p className="mt-1 text-xs text-muted-foreground">{staff.length} عضو</p>
       </div>
 
-      {/* Add-staff limitation notice (F11 gap — see docs) */}
+      {/* Add-staff limitation notice (F11 gap - see docs) */}
       {isOwner && (
         <div className="mb-5 flex items-start gap-2 rounded-2xl bg-secondary/60 p-4 text-xs text-muted-foreground">
           <Info className="size-4 shrink-0 mt-0.5" />
           <p>
-            إضافة موظف جديد تتطلب إنشاء حساب دخول له من جهة الخادم — هذه الخطوة غير متاحة في الإصدار
+            إضافة موظف جديد تتطلب إنشاء حساب دخول له من جهة الخادم - هذه الخطوة غير متاحة في الإصدار
             الحالي (تحتاج تحديثاً في العقود قبل تفعيلها). يمكنك عرض وإزالة الموظفين الحاليين.
           </p>
         </div>

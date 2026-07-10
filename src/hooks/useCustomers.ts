@@ -23,7 +23,7 @@ export function useCustomerProfile() {
 
 // Global customer lookup (staff-readable per customers_self_read). Used for measurement
 // entry: staff finds an EXISTING customer by name or phone. New customers self-register
-// via OTP — there is no staff-side create path (database.md rule 5).
+// via OTP - there is no staff-side create path (database.md rule 5).
 export function useCustomerSearch(query: string) {
   const q = query.trim();
   return useQuery<Customer[]>({

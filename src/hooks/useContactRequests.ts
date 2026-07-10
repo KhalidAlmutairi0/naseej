@@ -11,7 +11,7 @@ export interface InboxItem {
   fabric: { sku: string; description: string | null } | null;
 }
 
-// F9: Contact Shop. Dedup is application-layer — there is deliberately no DB unique
+// F9: Contact Shop. Dedup is application-layer - there is deliberately no DB unique
 // constraint (repeat interest over time is legitimate; only a 24h burst collapses).
 export function useContactShop() {
   const { userId } = useSession();
@@ -48,7 +48,7 @@ export function useContactShop() {
   });
 }
 
-// F10: shop inbox — requests for THIS shop only (RLS: shop_id = auth_shop_id()).
+// F10: shop inbox - requests for THIS shop only (RLS: shop_id = auth_shop_id()).
 export function useShopInbox(shopId: UUID | null) {
   return useQuery<InboxItem[]>({
     queryKey: ["contact_requests", "inbox", shopId],

@@ -16,7 +16,7 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
   head: () => ({
     meta: [
-      { title: "تسجيل الدخول — نَسيج" },
+      { title: "تسجيل الدخول - نَسيج" },
       { name: "description", content: "ابدأ رحلتك مع نَسيج، سوق الأقمشة الفاخرة." },
     ],
   }),
@@ -212,7 +212,7 @@ function AuthForm({
             : "نبدأ برقم جوالك، وباقي التفاصيل تعبيها بعدين"
           : mode === "login"
             ? "ادخل بريدك وكلمة المرور"
-            : "سجّل محلك وابدأ فوراً — بدون موافقات"}
+            : "سجّل محلك وابدأ فوراً، بدون موافقات"}
       </p>
 
       {/* Toggle */}
@@ -425,7 +425,7 @@ function TailorAuth({ mode }: { mode: "login" | "register" }) {
             label="المدينة / الموقع"
             value={location}
             onChange={setLocation}
-            placeholder="الرياض — حي التخصصي"
+            placeholder="الرياض، حي التخصصي"
           />
           <TextField
             label="رقم تواصل المحل"

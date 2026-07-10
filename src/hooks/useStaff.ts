@@ -19,7 +19,7 @@ export function useStaffList(shopId: UUID | null) {
   });
 }
 
-// Owner-only removal (RLS staff_owner_write). Adding staff is NOT implemented here — it
+// Owner-only removal (RLS staff_owner_write). Adding staff is NOT implemented here - it
 // requires creating an auth user for the employee (service role), which no documented
 // endpoint provides. See the phase-9 flag.
 export function useRemoveStaff(shopId: UUID | null) {

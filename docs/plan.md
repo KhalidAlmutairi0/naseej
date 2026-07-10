@@ -1,16 +1,16 @@
-# plan.md — Tailor Shop Marketplace MVP
+# plan.md - Tailor Shop Marketplace MVP
 
 ## 1. Problem
 
 Tailor shop customers need a better way to manage their measurements and fabric history because the process is still largely paper-based, and fabric identifiers are not effectively used. As a result, customers struggle to:
 
-1. **Recover their measurements** — the record lives on a paper card in one shop's drawer. Lose the card or switch shops, and the measurements are gone.
-2. **Find fabrics they previously liked** — fabric rolls have no identifier a customer can reference. "The blue one from last Ramadan" is not queryable.
-3. **Discover similar options** — with no structured fabric data, there is nothing to recommend against.
+1. **Recover their measurements** - the record lives on a paper card in one shop's drawer. Lose the card or switch shops, and the measurements are gone.
+2. **Find fabrics they previously liked** - fabric rolls have no identifier a customer can reference. "The blue one from last Ramadan" is not queryable.
+3. **Discover similar options** - with no structured fabric data, there is nothing to recommend against.
 
 ## 2. Core Insight & Positioning
 
-The differentiator is **customer-owned, portable history that survives across shops**. No single tailor's ledger can offer that — the value comes precisely from being a neutral layer above any one shop.
+The differentiator is **customer-owned, portable history that survives across shops**. No single tailor's ledger can offer that - the value comes precisely from being a neutral layer above any one shop.
 
 **Hook**: "Never lose a measurement or a fabric you loved again, even if you switch tailors."
 
@@ -27,7 +27,7 @@ What this product is NOT:
 | Customer   | Person who gets clothes tailored (thobes, suits) at one or more shops | Permanent measurement history + fabric memory + natural-language fabric discovery    |
 | Shop staff | Employee/owner of a tailor shop                                       | Digital customer records replacing paper cards, plus a lead inbox (contact requests) |
 
-Data entry is **staff-mediated**: shop staff enters measurements and fabric records. Customers consume, search, rate, and contact. This matches the existing in-person, physical process — customers are not asked to self-measure.
+Data entry is **staff-mediated**: shop staff enters measurements and fabric records. Customers consume, search, rate, and contact. This matches the existing in-person, physical process - customers are not asked to self-measure.
 
 ## 4. How It Works (solution mapping)
 
@@ -43,9 +43,9 @@ Data entry is **staff-mediated**: shop staff enters measurements and fabric reco
 - **Exploration** (customer-facing): browse/search fabrics across all shops, view detail, rate, save, contact.
 - **Confirmation** (staff-facing, in-store): look up or create a customer, enter measurements, record which fabric was chosen.
 
-These are two separate screen flows with separate layouts — not one screen with a mode toggle.
+These are two separate screen flows with separate layouts - not one screen with a mode toggle.
 
-## 6. Data Isolation Rule (load-bearing — never violate)
+## 6. Data Isolation Rule (load-bearing - never violate)
 
 - One customer = one account, shared across the whole marketplace.
 - A customer sees **all** of their own history across every shop.
@@ -54,7 +54,7 @@ These are two separate screen flows with separate layouts — not one screen wit
 
 ## 7. MVP Scope
 
-### In scope — with acceptance criteria
+### In scope - with acceptance criteria
 
 | #   | Feature                               | Done when                                                                                                                                                                                  |
 | --- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -65,13 +65,13 @@ These are two separate screen flows with separate layouts — not one screen wit
 | F5  | Measurement history (customer)        | Customer sees all entries across all shops, newest first, with shop name and date. Read-only.                                                                                              |
 | F6  | Semantic search (customer)            | Natural-language query returns similarity-ranked fabrics across all shops, above a minimum threshold. Fabrics without descriptions are excluded from semantic results but still browsable. |
 | F7  | Browse/filter fabrics (customer)      | Non-semantic list with basic filters (shop, season tag, price range).                                                                                                                      |
-| F8  | Fabric detail + rating                | 1–5 stars + optional text. One rating per customer per fabric (editable, not stackable). Average shown on card and detail.                                                                 |
+| F8  | Fabric detail + rating                | 1-5 stars + optional text. One rating per customer per fabric (editable, not stackable). Average shown on card and detail.                                                                 |
 | F9  | Contact Shop                          | Tap logs a contact_request (customer, fabric, shop, timestamp). Deduped within 24h for the same triple. Confirmation toast shown.                                                          |
 | F10 | Shop contact inbox                    | Staff sees requests for their shop only, newest first, with customer name/phone and fabric.                                                                                                |
 | F11 | Staff management                      | Shop owner can add/remove staff accounts for their shop.                                                                                                                                   |
 | F12 | Saved/rated fabrics view (customer)   | Customer sees fabrics they've rated or contacted about, as their "fabric memory."                                                                                                          |
 
-### Out of scope — do not build even partially
+### Out of scope - do not build even partially
 
 - Payments, checkout, cart, reservations, or booking of any kind
 - Shop approval/verification workflow
@@ -84,7 +84,7 @@ These are two separate screen flows with separate layouts — not one screen wit
 
 ## 8. Measurement Field Set (fixed for v1)
 
-`chest, waist, hip, shoulder, sleeve_length, inseam, neck, thobe_length` — plus optional free-text `notes`. `thobe_length` is nullable (relevant for thobe-focused shops, the core Saudi market case). Do not add, remove, or rename fields.
+`chest, waist, hip, shoulder, sleeve_length, inseam, neck, thobe_length` - plus optional free-text `notes`. `thobe_length` is nullable (relevant for thobe-focused shops, the core Saudi market case). Do not add, remove, or rename fields.
 
 ## 9. Language & Market
 

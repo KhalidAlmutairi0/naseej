@@ -5,7 +5,7 @@ export const Route = createFileRoute("/shop")({
   component: ShopLayout,
   head: () => ({
     meta: [
-      { title: "لوحة الخياط — نَسيج" },
+      { title: "لوحة الخياط - نَسيج" },
       { name: "description", content: "أدر أقمشتك، قياسات عملائك، ورسائلك من مكان واحد." },
     ],
   }),

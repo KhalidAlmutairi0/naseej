@@ -1,6 +1,6 @@
-// verify-otp — exchange a code for a session. Pre-auth.
+// verify-otp - exchange a code for a session. Pre-auth.
 // Contract: api-contracts.md §2. Implicit registration: first successful verify for an
-// unknown phone creates auth.users + customers (service role — no client insert policy).
+// unknown phone creates auth.users + customers (service role - no client insert policy).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const CORS = {

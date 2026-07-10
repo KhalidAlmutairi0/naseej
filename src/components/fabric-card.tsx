@@ -4,8 +4,8 @@ import type { Fabric } from "@/lib/types";
 import { FabricImage } from "./fabric-image";
 
 // Bound to real fabric columns (sku, description, price, season_tags, image_url).
-// `rating` is an optional pre-computed average — the card doesn't fetch per-item ratings.
-// Note: the design's heart/"save" action is intentionally omitted — there is no favorites
+// `rating` is an optional pre-computed average - the card doesn't fetch per-item ratings.
+// Note: the design's heart/"save" action is intentionally omitted - there is no favorites
 // table; "saved" is defined (F12) as fabrics the customer rated or contacted.
 export function FabricCard({ fabric, rating }: { fabric: Fabric; rating?: number }) {
   return (
@@ -31,7 +31,7 @@ export function FabricCard({ fabric, rating }: { fabric: Fabric; rating?: number
         </h3>
         <div className="mt-3 flex items-center justify-between">
           <span className="text-sm font-bold text-primary">
-            {fabric.price != null ? fabric.price : "—"}{" "}
+            {fabric.price != null ? fabric.price : "-"}{" "}
             <span className="text-[10px] font-medium text-muted-foreground">ر.س</span>
           </span>
           {rating != null && rating > 0 && (

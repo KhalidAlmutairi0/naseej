@@ -37,11 +37,11 @@ export function MeasurementHistoryTable({
               )}
               {MEASUREMENT_FIELDS.map((f) => (
                 <td key={f} className="p-3 text-center tabular-nums">
-                  {r[f] != null ? r[f] : "—"}
+                  {r[f] != null ? r[f] : "-"}
                 </td>
               ))}
               <td className="p-3 text-xs text-muted-foreground max-w-[200px] truncate">
-                {r.notes || "—"}
+                {r.notes || "-"}
               </td>
             </tr>
           ))}

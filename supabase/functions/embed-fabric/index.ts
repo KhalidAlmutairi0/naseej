@@ -1,4 +1,4 @@
-// embed-fabric — generate/store a fabric description embedding. Auth: staff.
+// embed-fabric - generate/store a fabric description embedding. Auth: staff.
 // Contract: api-contracts.md §3. The embeddings API key lives ONLY here and in
 // semantic-search. Model: OpenAI text-embedding-3-small → vector(1536).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
 
   const description = (fabric.description ?? "").trim();
   if (description === "") {
-    // Clean no-op — expected, not an error.
+    // Clean no-op - expected, not an error.
     return json({ success: false, reason: "no_description" });
   }
 

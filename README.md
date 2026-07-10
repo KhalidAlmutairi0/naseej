@@ -2,7 +2,7 @@
 
 **A tailor-shop fabric marketplace with portable, customer-owned measurement history and AI semantic fabric search.**
 
-Naseej solves a very specific, very real problem in the Saudi tailoring market: your measurements live on a paper card in one shop's drawer, and the fabric you loved last Ramadan has no name you can search for. Naseej makes measurements **portable across every shop** and fabrics **discoverable in natural language** — while guaranteeing, at the database layer, that no shop can read another shop's records for a shared customer.
+Naseej solves a very specific, very real problem in the Saudi tailoring market: your measurements live on a paper card in one shop's drawer, and the fabric you loved last Ramadan has no name you can search for. Naseej makes measurements **portable across every shop** and fabrics **discoverable in natural language** - while guaranteeing, at the database layer, that no shop can read another shop's records for a shared customer.
 
 > Arabic-first, RTL. Built for Saudi Arabia (phone `+9665…`, prices in SAR). Not an e-commerce, cart, checkout, booking, POS, or ERP system.
 
@@ -10,11 +10,11 @@ Naseej solves a very specific, very real problem in the Saudi tailoring market: 
 
 ## Core idea
 
-The product is a **neutral layer above any single shop** — and that neutrality is the value:
+The product is a **neutral layer above any single shop** - and that neutrality is the value:
 
-- **One customer identity, shared across the whole marketplace** — never per-shop copies.
+- **One customer identity, shared across the whole marketplace** - never per-shop copies.
 - A **customer** reads their *full* measurement history across every shop they've visited.
-- A **shop** can read and write only the entries *it* created — enforced by Postgres Row-Level Security, not UI hiding.
+- A **shop** can read and write only the entries *it* created - enforced by Postgres Row-Level Security, not UI hiding.
 - The only purchase-adjacent action is **"Contact Shop."** No payments, cart, checkout, or booking of any kind.
 
 ---
@@ -30,7 +30,7 @@ The product is a **neutral layer above any single shop** — and that neutrality
 | F5 | Measurement history | Customer sees every entry across all shops, newest first, read-only. |
 | F6 | Semantic search | Natural-language fabric search ranked by cosine similarity over description embeddings. |
 | F7 | Browse & filter | Non-semantic list with shop / season-tag / price filters. |
-| F8 | Ratings | 1–5 stars + optional text, one editable rating per customer per fabric. |
+| F8 | Ratings | 1-5 stars + optional text, one editable rating per customer per fabric. |
 | F9 | Contact Shop | Logs a `contact_request`, deduped 24h per (customer, fabric, shop). |
 | F10 | Shop inbox | Staff see contact requests for their shop only. |
 | F11 | Staff management | Owner views/removes staff. |
@@ -44,7 +44,7 @@ The product is a **neutral layer above any single shop** — and that neutrality
 |-------|--------|
 | Framework | React 19 + **TanStack Start / Router** (file-based routing, SSR) |
 | Styling | Tailwind CSS v4 + shadcn/ui, RTL-first |
-| Data | **Supabase** — Postgres + `pgvector`, Auth, Edge Functions |
+| Data | **Supabase** - Postgres + `pgvector`, Auth, Edge Functions |
 | Server logic | Four Deno edge functions (only where a server-side secret or bootstrap logic is required) |
 | Embeddings | OpenAI `text-embedding-3-small` (`vector(1536)`) |
 | Data fetching | TanStack Query |
@@ -99,7 +99,7 @@ Measurement fields are exactly: `chest, waist, hip, shoulder, sleeve_length, ins
 
 The embeddings API key exists **only** inside `embed-fabric` and `semantic-search`.
 
-Full spec: [`docs/`](docs/) — [product plan](docs/plan.md), [architecture](docs/architecture.md), [database](docs/database.md), [API contracts](docs/api-contracts.md).
+Full spec: [`docs/`](docs/) - [product plan](docs/plan.md), [architecture](docs/architecture.md), [database](docs/database.md), [API contracts](docs/api-contracts.md).
 
 ---
 
@@ -133,10 +133,10 @@ docs/                          # product & technical specification
 # 1. Install
 bun install
 
-# 2. Configure — copy the example and fill in your project's values
+# 2. Configure - copy the example and fill in your project's values
 cp .env.example .env
 
-# 3. Database — apply the schema + RLS
+# 3. Database - apply the schema + RLS
 supabase link --project-ref <your-ref>
 supabase db push
 
@@ -154,7 +154,7 @@ bun dev
 | Variable | Where | Notes |
 |----------|-------|-------|
 | `VITE_SUPABASE_URL` | client | Browser-safe |
-| `VITE_SUPABASE_ANON_KEY` | client | anon / publishable key — browser-safe (RLS gates everything) |
+| `VITE_SUPABASE_ANON_KEY` | client | anon / publishable key - browser-safe (RLS gates everything) |
 | `SUPABASE_SERVICE_ROLE_KEY` | edge only | Auto-injected into deployed functions |
 | `OPENAI_API_KEY` | edge only | Embeddings; confined to two functions |
 

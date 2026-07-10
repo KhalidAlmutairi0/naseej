@@ -8,7 +8,7 @@ import { useBrowseFabrics } from "@/hooks/useFabrics";
 export const Route = createFileRoute("/tailor/$id")({
   component: TailorPage,
   head: () => ({
-    meta: [{ title: "الخياط — نَسيج" }],
+    meta: [{ title: "الخياط - نَسيج" }],
   }),
 });
 

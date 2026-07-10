@@ -14,7 +14,7 @@ export const Route = createFileRoute("/measurements")({
   ),
   head: () => ({
     meta: [
-      { title: "سجل القياسات — نَسيج" },
+      { title: "سجل القياسات - نَسيج" },
       { name: "description", content: "احفظ قياساتك رقمياً واحصل عليها من أي مكان." },
     ],
   }),
@@ -77,7 +77,7 @@ function MeasurementsPage() {
             <h3 className="text-sm font-bold mb-3">السجل الكامل ({rows.length})</h3>
             <MeasurementHistoryTable
               rows={rows}
-              shopNameOf={(r) => (r as typeof latest).shop?.name ?? "—"}
+              shopNameOf={(r) => (r as typeof latest).shop?.name ?? "-"}
             />
           </section>
         </>

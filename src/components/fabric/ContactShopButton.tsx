@@ -35,7 +35,7 @@ export function ContactShopButton({
         onSuccess: (res) =>
           toast.success(
             res.deduped
-              ? "تواصلت مع هذا الخياط مؤخراً — طلبك مسجّل"
+              ? "تواصلت مع هذا الخياط مؤخراً، طلبك مسجّل"
               : "تم إرسال طلب التواصل للخياط",
           ),
         onError: () => toast.error("تعذّر إرسال الطلب. حاول مرة أخرى."),

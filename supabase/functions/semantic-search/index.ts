@@ -1,4 +1,4 @@
-// semantic-search — natural-language fabric search. Auth: customer or staff.
+// semantic-search - natural-language fabric search. Auth: customer or staff.
 // Contract: api-contracts.md §4. Returns IDs + scores only; the client hydrates rows.
 // The embeddings key lives ONLY here and in embed-fabric.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";

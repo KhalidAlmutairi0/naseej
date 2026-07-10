@@ -11,7 +11,7 @@ export const Route = createFileRoute("/")({
   component: HomePage,
   head: () => ({
     meta: [
-      { title: "نَسيج — اكتشف أفخر الأقمشة الرجالية" },
+      { title: "نَسيج - اكتشف أفخر الأقمشة الرجالية" },
       {
         name: "description",
         content: "أفضل أقمشة الثياب السعودية، بحث بالذكاء الاصطناعي، وخياطون معتمدون.",
@@ -111,7 +111,7 @@ function HomePage() {
                 </div>
                 <h4 className="mt-3 text-sm font-semibold line-clamp-1">{s.name}</h4>
                 <p className="mt-0.5 text-[11px] text-muted-foreground line-clamp-1">
-                  {s.location ?? "—"}
+                  {s.location ?? "-"}
                 </p>
               </Link>
             ))}

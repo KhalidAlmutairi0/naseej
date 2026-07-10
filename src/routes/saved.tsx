@@ -14,7 +14,7 @@ export const Route = createFileRoute("/saved")({
   ),
   head: () => ({
     meta: [
-      { title: "ذاكرة الأقمشة — نَسيج" },
+      { title: "ذاكرة الأقمشة - نَسيج" },
       { name: "description", content: "الأقمشة التي قيّمتها أو تواصلت بشأنها." },
     ],
   }),
@@ -41,7 +41,7 @@ function SavedPage() {
       <div className="mb-5">
         <h2 className="text-2xl font-bold tracking-tight">ذاكرة أقمشتك</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          الأقمشة التي قيّمتها أو تواصلت بشأنها — حتى لو غيّرت الخياط.
+          الأقمشة التي قيّمتها أو تواصلت بشأنها - حتى لو غيّرت الخياط.
         </p>
       </div>
 

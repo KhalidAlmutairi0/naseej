@@ -7,7 +7,7 @@ export interface PublicSupabaseConfig {
 
 // Reads the browser-safe Supabase config from the SERVER's runtime env and hands it to the
 // client. This is what makes the app work on hosts that inject env at runtime (not build
-// time) or under non-VITE names — the browser bundle no longer needs VITE_* baked in.
+// time) or under non-VITE names - the browser bundle no longer needs VITE_* baked in.
 // Both values are public (URL + anon/publishable key); RLS is what protects the data.
 export const getPublicSupabaseConfig = createServerFn({ method: "GET" }).handler(
   (): PublicSupabaseConfig => {

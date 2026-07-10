@@ -4,9 +4,9 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 // RLS gates every read/write. The embeddings/secret keys live ONLY in edge functions.
 //
 // Config is resolved LAZILY from (in order):
-//   1. window.__SUPABASE__  — injected by the SSR server at runtime (see public-config.ts)
-//   2. import.meta.env      — VITE_* baked in at build time (local dev / build-time hosts)
-//   3. process.env          — server runtime env, accepting VITE_ or plain SUPABASE_ names
+//   1. window.__SUPABASE__  - injected by the SSR server at runtime (see public-config.ts)
+//   2. import.meta.env      - VITE_* baked in at build time (local dev / build-time hosts)
+//   3. process.env          - server runtime env, accepting VITE_ or plain SUPABASE_ names
 // This makes the app work whether the host injects env at build time or runtime, and
 // whether the vars are named VITE_SUPABASE_* or SUPABASE_*.
 

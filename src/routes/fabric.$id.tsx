@@ -12,7 +12,7 @@ import { useShop } from "@/hooks/useShops";
 export const Route = createFileRoute("/fabric/$id")({
   component: FabricDetail,
   head: () => ({
-    meta: [{ title: "تفاصيل القماش — نَسيج" }],
+    meta: [{ title: "تفاصيل القماش - نَسيج" }],
   }),
 });
 
@@ -76,7 +76,7 @@ function FabricDetail() {
           <span className="flex items-center gap-1">
             <Star className="size-3.5 fill-accent text-accent" />
             <span className="font-bold">
-              {aggregate && aggregate.count > 0 ? aggregate.average.toFixed(1) : "—"}
+              {aggregate && aggregate.count > 0 ? aggregate.average.toFixed(1) : "-"}
             </span>
             <span className="text-muted-foreground">({aggregate?.count ?? 0} تقييم)</span>
           </span>
@@ -85,7 +85,7 @@ function FabricDetail() {
           <div>
             <p className="text-[11px] text-muted-foreground">السعر / متر</p>
             <p className="text-3xl font-bold text-primary">
-              {fabric.price != null ? fabric.price : "—"}
+              {fabric.price != null ? fabric.price : "-"}
               <span className="text-sm font-medium text-muted-foreground mr-1">ر.س</span>
             </p>
           </div>
@@ -125,7 +125,7 @@ function FabricDetail() {
             </div>
             <div className="flex-1 min-w-0">
               <h4 className="text-sm font-semibold truncate">{shop.name}</h4>
-              <p className="mt-0.5 text-[11px] text-muted-foreground">{shop.location ?? "—"}</p>
+              <p className="mt-0.5 text-[11px] text-muted-foreground">{shop.location ?? "-"}</p>
             </div>
             <ArrowRight className="size-4 text-muted-foreground rotate-180" />
           </Link>

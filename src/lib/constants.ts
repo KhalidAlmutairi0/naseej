@@ -35,7 +35,7 @@ export const SIMILARITY_THRESHOLD = 0.3;
 export const SEMANTIC_SEARCH_MAX_LIMIT = 50;
 
 // Contact-request dedup window: same (customer, fabric, shop) collapses within this many hours.
-// Enforced at the application layer — there is deliberately no DB unique constraint.
+// Enforced at the application layer - there is deliberately no DB unique constraint.
 export const CONTACT_DEDUP_WINDOW_HOURS = 24;
 
 // Saudi phone format: +9665 followed by 8 digits.

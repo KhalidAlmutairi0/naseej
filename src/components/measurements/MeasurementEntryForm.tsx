@@ -47,7 +47,7 @@ export function MeasurementEntryForm({
               onChange={(e) => set(f, e.target.value)}
               inputMode="decimal"
               dir="ltr"
-              placeholder="—"
+              placeholder="-"
               className="mt-1.5 w-full rounded-xl bg-card ring-1 ring-border px-3 py-2 text-sm text-center tabular-nums focus:outline-none focus:ring-primary/40"
             />
           </div>
@@ -60,7 +60,7 @@ export function MeasurementEntryForm({
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
-          placeholder="ثوب رسمي — رقبة كلاسيكية…"
+          placeholder="ثوب رسمي، رقبة كلاسيكية…"
           className="mt-1.5 w-full rounded-xl bg-card ring-1 ring-border px-3 py-2 text-sm focus:outline-none focus:ring-primary/40"
         />
       </div>

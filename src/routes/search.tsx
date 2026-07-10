@@ -16,7 +16,7 @@ export const Route = createFileRoute("/search")({
   component: SearchPage,
   head: () => ({
     meta: [
-      { title: "بحث الأقمشة — نَسيج" },
+      { title: "بحث الأقمشة - نَسيج" },
       { name: "description", content: "ابحث بالذكاء الاصطناعي عن قماشك المثالي." },
     ],
   }),
@@ -137,7 +137,7 @@ function SearchPage() {
               dir="ltr"
               className="flex-1 rounded-xl bg-card ring-1 ring-border px-3 py-2 text-sm focus:outline-none"
             />
-            <span className="text-muted-foreground">—</span>
+            <span className="text-muted-foreground">-</span>
             <input
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
@@ -186,7 +186,7 @@ function SearchPage() {
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
             {inSemanticMode
-              ? "جرّب وصفاً آخر — النتائج تعتمد على أوصاف الخياطين"
+              ? "جرّب وصفاً آخر، النتائج تعتمد على أوصاف الخياطين"
               : "جرّب فلاتر مختلفة"}
           </p>
         </div>

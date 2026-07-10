@@ -30,7 +30,7 @@ async function callFn<T>(name: string, body: unknown): Promise<T> {
           message = parsed.error.message;
         }
       } catch {
-        /* non-JSON body — keep defaults */
+        /* non-JSON body - keep defaults */
       }
     }
     throw new ApiCallError(code, message);

@@ -1,5 +1,5 @@
 /**
- * A stylized fabric swatch — soft woven look with subtle diagonal weave lines
+ * A stylized fabric swatch - soft woven look with subtle diagonal weave lines
  * and a warm sheen, generated from the fabric's color hex.
  */
 export function FabricSwatch({

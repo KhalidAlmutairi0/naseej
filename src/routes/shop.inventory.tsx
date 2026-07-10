@@ -12,7 +12,7 @@ export const Route = createFileRoute("/shop/inventory")({
   component: Inventory,
   head: () => ({
     meta: [
-      { title: "الأقمشة — لوحة الخياط" },
+      { title: "الأقمشة - لوحة الخياط" },
       { name: "description", content: "أدر مخزون الأقمشة." },
     ],
   }),
@@ -115,7 +115,7 @@ function Inventory() {
                 </div>
                 <div className="mt-3 flex items-center justify-between">
                   <span className="text-sm font-bold text-primary">
-                    {f.price != null ? `${f.price} ر.س` : "—"}
+                    {f.price != null ? `${f.price} ر.س` : "-"}
                   </span>
                   <div className="flex flex-wrap gap-1 justify-end">
                     {f.season_tags.slice(0, 2).map((t) => (
@@ -150,10 +150,10 @@ function Inventory() {
                     <span className="text-xs font-bold text-accent">{f.sku}</span>
                   </td>
                   <td className="p-3 text-xs text-muted-foreground hidden sm:table-cell max-w-xs truncate">
-                    {f.description || "—"}
+                    {f.description || "-"}
                   </td>
                   <td className="p-3 text-xs font-bold">
-                    {f.price != null ? `${f.price} ر.س` : "—"}
+                    {f.price != null ? `${f.price} ر.س` : "-"}
                   </td>
                   <td className="p-3 text-left">
                     <RowActions onEdit={() => setEditing(f)} onDelete={() => remove.mutate(f.id)} />

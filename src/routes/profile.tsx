@@ -25,7 +25,7 @@ export const Route = createFileRoute("/profile")({
     </RequireRole>
   ),
   head: () => ({
-    meta: [{ title: "الملف الشخصي — نَسيج" }, { name: "description", content: "حسابك وإعداداتك." }],
+    meta: [{ title: "الملف الشخصي - نَسيج" }, { name: "description", content: "حسابك وإعداداتك." }],
   }),
 });
 
@@ -56,7 +56,7 @@ function ProfilePage() {
             {initials(profile?.full_name)}
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-bold">{profile?.full_name ?? "—"}</h2>
+            <h2 className="text-lg font-bold">{profile?.full_name ?? "-"}</h2>
             <p className="text-xs text-muted-foreground" dir="ltr">
               {profile?.phone ?? ""}
             </p>

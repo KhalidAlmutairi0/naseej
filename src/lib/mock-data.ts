@@ -594,7 +594,7 @@ export const measurements: Measurement[] = [
       { label: "الكم", value: 62, unit: "سم" },
       { label: "الوسع", value: 128, unit: "سم" },
     ],
-    notes: "ثوب رسمي — رقبة كلاسيكية، كبك مغلق.",
+    notes: "ثوب رسمي - رقبة كلاسيكية، كبك مغلق.",
   },
   {
     id: "m2",
@@ -638,7 +638,7 @@ export const measurements: Measurement[] = [
       { label: "الكم", value: 63, unit: "سم" },
       { label: "الوسع", value: 130, unit: "سم" },
     ],
-    notes: "ثوب عرس — رقبة كبك مطرّز بخيوط ذهبية.",
+    notes: "ثوب عرس - رقبة كبك مطرّز بخيوط ذهبية.",
   },
   {
     id: "m5",
@@ -653,7 +653,7 @@ export const measurements: Measurement[] = [
       { label: "الكم", value: 62, unit: "سم" },
       { label: "الوسع", value: 127, unit: "سم" },
     ],
-    notes: "ثوب عمرة — قماش خفيف.",
+    notes: "ثوب عمرة - قماش خفيف.",
   },
   {
     id: "m6",

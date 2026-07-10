@@ -86,14 +86,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "نَسيج — سوق الأقمشة الفاخرة للثياب" },
+      { title: "نَسيج - سوق الأقمشة الفاخرة للثياب" },
       {
         name: "description",
         content:
           "نَسيج هو سوق الأقمشة الرجالية الفاخرة في المملكة. اكتشف أفضل الأقمشة، احفظ قياساتك رقمياً، وتواصل مع أفضل الخياطين.",
       },
       { name: "author", content: "Naseej" },
-      { property: "og:title", content: "نَسيج — سوق الأقمشة الفاخرة" },
+      { property: "og:title", content: "نَسيج - سوق الأقمشة الفاخرة" },
       {
         property: "og:description",
         content:
@@ -104,6 +104,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },

@@ -18,7 +18,7 @@ export const Route = createFileRoute("/shop/customers")({
   component: Customers,
   head: () => ({
     meta: [
-      { title: "العملاء — لوحة الخياط" },
+      { title: "العملاء - لوحة الخياط" },
       { name: "description", content: "ابحث في عملائك، قياساتهم، وسجلهم." },
     ],
   }),
