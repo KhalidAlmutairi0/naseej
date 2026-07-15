@@ -17,23 +17,25 @@ const SIMILARITY_THRESHOLD = 0.4;
 // Relative cutoff: keep only results within this margin of the top score. Arabic embedding
 // scores are compressed and the top score varies per query, so a single absolute cutoff
 // leaves a long irrelevant tail. Dropping results far below the best one removes that noise.
-const RELATIVE_MARGIN = 0.1;
+const RELATIVE_MARGIN = 0.12;
 
 // Hybrid re-rank. Pure vector similarity confuses antonyms: a "ثقيل" (heavy) query scores
 // high on "خفيف" (light) descriptions because both are weight words in the same context.
 // After the vector step we add a lexical signal: +1 for each query attribute word that
 // literally appears in the description, -1 when its ANTONYM appears. This lets exact
 // attributes (heavy vs light, winter vs summer) decide the ranking.
-const LEXICAL_WEIGHT = 0.2;
-const CANDIDATE_THRESHOLD = 0.25; // wider pool to re-rank
-const CANDIDATE_COUNT = 40;
+const LEXICAL_WEIGHT = 0.15;
+// Pull a wide candidate pool (near-zero floor) so fabrics that LEXICALLY match a short/exact
+// query — but have low embedding similarity to a bare word like "بارد" — still get considered.
+const CANDIDATE_THRESHOLD = 0.0;
+const CANDIDATE_COUNT = 100;
 const STOPWORDS = new Set([
   "قماش", "ثوب", "ثياب", "ابي", "حق", "بس", "شي", "يكون", "هذا", "الي", "اللي",
   "مع", "من", "في", "على", "عن", "او", "حلو", "ابغى", "خامة",
 ]);
 const ANTONYMS: Record<string, string[]> = {
   "ثقيل": ["خفيف"], "خفيف": ["ثقيل"],
-  "دافئ": ["بارد"], "بارد": ["دافئ"],
+  "دافئ": ["بارد"], "دفء": ["بارد"], "بارد": ["دافئ", "دفء", "دفا"],
   "شتوي": ["صيفي"], "صيفي": ["شتوي"],
   "غامق": ["فاتح"], "فاتح": ["غامق"],
   "فاخر": ["اقتصادي", "رخيص"], "رخيص": ["فاخر"], "اقتصادي": ["فاخر"],
@@ -54,8 +56,10 @@ const SYNONYMS: Record<string, string[]> = {
   "wool": ["صوف"],
   "سلك": ["حرير"], "silk": ["حرير"],
   "linen": ["كتان"],
-  "summer": ["صيفي"], "winter": ["شتاء", "شتوي"], "شتوي": ["شتاء"],
+  "summer": ["صيفي", "صيف"], "winter": ["شتاء", "شتوي"],
+  "شتوي": ["شتاء"], "صيفي": ["صيف"],
   "light": ["خفيف"], "heavy": ["ثقيل"],
+  "دافئ": ["دفء", "دفا"], "warm": ["دافئ", "دفء"], "cold": ["بارد"], "cool": ["بارد"],
   "formal": ["رسمي"], "luxury": ["فاخر", "فخم"], "luxurious": ["فاخر", "فخم"],
 };
 
@@ -175,15 +179,19 @@ Deno.serve(async (req) => {
         if (antonymsOf(t).some((a) => desc.includes(a))) boost -= 1;
       }
       const lexical = terms.length > 0 ? boost / terms.length : 0;
-      return { ...c, final: c.similarity + LEXICAL_WEIGHT * lexical };
+      return { ...c, boost, final: c.similarity + LEXICAL_WEIGHT * lexical };
     })
     .sort((a, b) => b.final - a.final);
 
-  // Floor + relative cutoff applied on the hybrid score: a fabric whose antonym matches
-  // is pushed below the floor and dropped, while an exact attribute match is lifted.
-  const kept = scored.filter((c) => c.final >= SIMILARITY_THRESHOLD);
-  const top = kept.length > 0 ? kept[0].final : 0;
-  const results = kept
+  // A fabric qualifies if EITHER it literally matches a query word (boost > 0) — so an exact
+  // word like "بارد" always surfaces even when its bare-word embedding score is low — OR its
+  // semantic similarity clears the floor (pure-meaning / paraphrase queries). Antonym matches
+  // (boost < 0) never qualify on the lexical path and are pushed down by the penalty.
+  const qualified = scored.filter(
+    (c) => c.boost > 0 || c.similarity >= SIMILARITY_THRESHOLD,
+  );
+  const top = qualified.length > 0 ? qualified[0].final : 0;
+  const results = qualified
     .filter((c) => c.final >= top - RELATIVE_MARGIN)
     .slice(0, cappedLimit)
     .map((c) => ({ fabric_id: c.id, shop_id: c.shop_id, similarity: c.similarity }));
